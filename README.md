@@ -15,18 +15,8 @@ Ensure you put the "tf2-preview_mobilenet_v2_feature_vector_4" weights in the "r
 
 Ensure you put the "resnet50-0676ba61.pth" weights in the "resources" directory.  You can get these weights from:
 ["resnet50-0676ba61.pth"](https://drive.google.com/file/d/1TN96v1yxSv3PY5CM1Q37y0mdxUTLm2gL/view?usp=sharing)
+
 ------------------
-~~~~~~~
-
-Python 3 + Tkinter
-.. code:: shell
-    cd ~/
-    python3 -m venv venv_CLASSIFY_CHIPS
-    source venv_CLASSIFY_CHIPS/bin/activate
-    cd CLASSIFY_CHIPS
-    pip3 install -r requirements.txt
-
-~~~~~~~
 
 Installation
 ------------------
