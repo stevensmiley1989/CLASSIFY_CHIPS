@@ -4,6 +4,29 @@ CLASSIFY_CHIPS.py is GUI for creating custom PyTorch/Tensorflow Image Classifier
 
 It is written in Python and uses Tkinter for its graphical interface.
 
+Prerequisites
+------------------
+
+Ensure you put the "imagenet_resnet_v1_101_feature_vector_5" weights in the "resources" directory.  You can get these weights from:
+["imagenet_resnet_v1_101_feature_vector_5"](https://tfhub.dev/google/imagenet/resnet_v1_101/feature_vector/5?tf-hub-format=compressed)
+
+Ensure you put the "tf2-preview_mobilenet_v2_feature_vector_4" weights in the "resources" directory.  You can get these weights from:
+["tf2-preview_mobilenet_v2_feature_vector_4"](https://tfhub.dev/google/tf2-preview/mobilenet_v2/feature_vector/4?tf-hub-format=compressed)
+
+Ensure you put the "resnet50-0676ba61.pth" weights in the "resources" directory.  You can get these weights from:
+["resnet50-0676ba61.pth"](https://drive.google.com/file/d/1TN96v1yxSv3PY5CM1Q37y0mdxUTLm2gL/view?usp=sharing)
+------------------
+~~~~~~~
+
+Python 3 + Tkinter
+.. code:: shell
+    cd ~/
+    python3 -m venv venv_CLASSIFY_CHIPS
+    source venv_CLASSIFY_CHIPS/bin/activate
+    cd CLASSIFY_CHIPS
+    pip3 install -r requirements.txt
+
+~~~~~~~
 
 Installation
 ------------------
