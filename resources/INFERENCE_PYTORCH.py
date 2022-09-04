@@ -63,11 +63,7 @@ ap.add_argument("--MODEL_TYPE",type=str,default=MODEL_RESNET,help='type of class
 global args
 args = vars(ap.parse_args())
 SETTINGS_PATH=args['SETTINGS_PATH']
-MODEL_TYPE=args['MODEL_TYPE']
-if MODEL_TYPE==MODEL_RESNET:
-    OUTPUT_SHAPE=OUTPUT_SHAPE_RESNET
-    path_MODEL=MODEL_RESNET  
-print('USING {}'.format(path_MODEL)) 
+
 if os.path.exists(SETTINGS_PATH):
     if os.path.exists('tmp')==False:
         os.makedirs('tmp')
@@ -78,7 +74,11 @@ if os.path.exists(SETTINGS_PATH):
     print('IMPORTED SETTINGS')
 else:
     print('ERROR could not import SETTINGS.py')
-
+MODEL_TYPE=args['MODEL_TYPE']
+if MODEL_TYPE==MODEL_RESNET:
+    OUTPUT_SHAPE=OUTPUT_SHAPE_RESNET
+    path_MODEL=MODEL_RESNET  
+print('USING {}'.format(path_MODEL)) 
 class SquarePad:
 	def __call__(self, image):
 		w, h = image.size

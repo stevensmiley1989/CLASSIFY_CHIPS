@@ -76,15 +76,7 @@ ap.add_argument("--MODEL_TYPE",type=str,default=MODEL_RESNET,help='type of class
 global args
 args = vars(ap.parse_args())
 SETTINGS_PATH=args['SETTINGS_PATH']
-MODEL_TYPE=args['MODEL_TYPE']
-if MODEL_TYPE==MODEL_MOBILENET:
-    OUTPUT_SHAPE=OUTPUT_SHAPE_MOBILENET
-    path_MODEL=MODEL_MOBILENET
-    chipH=224
-    chipW=224
-elif MODEL_TYPE==MODEL_RESNET:
-    OUTPUT_SHAPE=OUTPUT_SHAPE_RESNET
-    path_MODEL=MODEL_RESNET  
+
 if os.path.exists(SETTINGS_PATH):
     if os.path.exists('tmp')==False:
         os.makedirs('tmp')
@@ -95,6 +87,15 @@ if os.path.exists(SETTINGS_PATH):
     print('IMPORTED SETTINGS')
 else:
     print('ERROR could not import SETTINGS.py')
+MODEL_TYPE=args['MODEL_TYPE']
+if MODEL_TYPE==MODEL_MOBILENET:
+    OUTPUT_SHAPE=OUTPUT_SHAPE_MOBILENET
+    path_MODEL=MODEL_MOBILENET
+    chipH=224
+    chipW=224
+elif MODEL_TYPE==MODEL_RESNET:
+    OUTPUT_SHAPE=OUTPUT_SHAPE_RESNET
+    path_MODEL=MODEL_RESNET  
 custom_model_path_SAVED=os.path.join(os.path.dirname(custom_model_path),'SAVED_'+os.path.basename(path_MODEL))
 custom_model_path_TFLITE=os.path.join(os.path.dirname(custom_model_path),'TFLITE_'+os.path.basename(path_MODEL))
 NEW_SAVED_MODEL=os.path.join(custom_model_path_SAVED,'CUSTOM'+os.path.basename(MODEL_TYPE))

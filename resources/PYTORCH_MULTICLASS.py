@@ -45,20 +45,18 @@ OUTPUT_SHAPE_RESNET=2048
 ap = argparse.ArgumentParser()
 ap.add_argument("--SETTINGS_PATH",dest='SETTINGS_PATH',type=str,default="SETTINGS.py",help='path to SETTINGS.py')
 ap.add_argument("--MODEL_TYPE",type=str,default=MODEL_RESNET,help='type of classifier to use')
+ap.add_argument("--TRAIN",action='store_true',help='TRAIN or TEST')
 global args
 args = vars(ap.parse_args())
+TRAIN=args['TRAIN']
 SETTINGS_PATH=args['SETTINGS_PATH']
-MODEL_TYPE=args['MODEL_TYPE']
-if MODEL_TYPE==MODEL_RESNET:
-    OUTPUT_SHAPE=OUTPUT_SHAPE_RESNET
-    path_MODEL=MODEL_RESNET  
-print('USING {}'.format(path_MODEL)) 
+
 if os.path.exists(SETTINGS_PATH):
     if os.path.exists('tmp')==False:
         os.makedirs('tmp')
     CUSTOM_SETTINGS_PATH=os.path.join('tmp','CUSTOM_SETTINGS.py')
     shutil.copy(SETTINGS_PATH,CUSTOM_SETTINGS_PATH)
-    from tmp.CUSTOM_SETTINGS import PORT,HOST,target,ignore_list_str,chipW,chipH,batch_size,custom_model_path,classes_path,data_dir,TRAIN,LOAD_PREVIOUS,data_dir_test,data_dir_train
+    from tmp.CUSTOM_SETTINGS import PORT,HOST,target,ignore_list_str,chipW,chipH,batch_size,custom_model_path,classes_path,data_dir,LOAD_PREVIOUS,data_dir_test,data_dir_train
     from tmp.CUSTOM_SETTINGS import epochs,print_every
     from tmp.CUSTOM_SETTINGS import TRAIN_TEST_SPLIT
     from tmp.CUSTOM_SETTINGS import LEARNING_RATE
@@ -66,10 +64,16 @@ if os.path.exists(SETTINGS_PATH):
     print('IMPORTED SETTINGS')
 else:
     print('ERROR could not import SETTINGS.py')
+
 if TRAIN:
     data_dir=data_dir_train
 else:
     data_dir=data_dir_test
+MODEL_TYPE=args['MODEL_TYPE']
+if MODEL_TYPE==MODEL_RESNET:
+    OUTPUT_SHAPE=OUTPUT_SHAPE_RESNET
+    path_MODEL=MODEL_RESNET  
+print('USING {}'.format(path_MODEL)) 
 class SquarePad:
 	def __call__(self, image):
 		w, h = image.size
