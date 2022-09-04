@@ -776,15 +776,66 @@ class classify_chips:
 
 
     def CREATE_SCRIPTS(self):
-
+        
         self.save_settings()
         shutil.copy(self.SAVED_SETTINGS_PATH,self.MODELS_PATH)
+        SAVED_SETTINGS_PATH=os.path.join(self.MODELS_PATH,os.path.basename(self.SAVED_SETTINGS_PATH))
+        for PYTORCH_MODEL in self.PYTORCH_OPTIONS:
+            #TRAIN
+            self.TRAIN_SCRIPT_PATH=os.path.join(self.MODELS_PATH,'TRAIN_PYTORCH_{}.sh'.format(PYTORCH_MODEL))
+            self.TRAIN_PATH=os.path.abspath('resources')
+            f=open(self.TRAIN_SCRIPT_PATH,'w')
+            f.writelines(f'cd {self.TRAIN_PATH}\n')
+            f.writelines(f'python3 PYTORCH_MULTICLASS.py --SETTINGS_PATH="{SAVED_SETTINGS_PATH}" --MODEL_TYPE="{PYTORCH_MODEL}" --TRAIN\n')
+            f.close()
+
+            #TEST
+            self.TEST_SCRIPT_PATH=os.path.join(self.MODELS_PATH,'TEST_PYTORCH_{}.sh'.format(PYTORCH_MODEL))
+            self.TEST_PATH=os.path.abspath('resources')
+            f=open(self.TEST_SCRIPT_PATH,'w')
+            f.writelines(f'cd {self.TEST_PATH}\n')
+            f.writelines(f'python3 PYTORCH_MULTICLASS.py --SETTINGS_PATH="{SAVED_SETTINGS_PATH}" --MODEL_TYPE="{PYTORCH_MODEL}"\n')
+            f.close()
+
+            #INFERENCE
+            self.INFERENCE_SCRIPT_PATH=os.path.join(self.MODELS_PATH,'INFERENCE_PYTORCH_{}.sh'.format(PYTORCH_MODEL))
+            self.INFERENCE_PATH=os.path.abspath('resources')
+            f=open(self.INFERENCE_SCRIPT_PATH,'w')
+            f.writelines(f'cd {self.INFERENCE_PATH}\n')
+            f.writelines(f'python3 INFERENCE_PYTORCH.py --SETTINGS_PATH="{SAVED_SETTINGS_PATH}" --MODEL_TYPE="{PYTORCH_MODEL}"\n')
+            f.close()
+
+        for TENSORFLOW_MODEL in self.TENSORFLOW_OPTIONS:
+            #TRAIN TFLITE
+            self.TRAIN_SCRIPT_PATH_TENSORFLOW=os.path.join(self.MODELS_PATH,'TRAIN_TENSORFLOW_{}.sh'.format(TENSORFLOW_MODEL))
+            self.TRAIN_PATH_TENSORFLOW=os.path.abspath('resources')
+            f=open(self.TRAIN_SCRIPT_PATH_TENSORFLOW,'w')
+            f.writelines(f'cd {self.TRAIN_PATH_TENSORFLOW}\n')
+            f.writelines(f'python3 TENSORFLOW_MULTICLASS.py --SETTINGS_PATH="{SAVED_SETTINGS_PATH}" --MODEL_TYPE="{TENSORFLOW_MODEL}" --TRAIN\n')
+            f.close()
+
+            #TEST TFLITE
+            self.TEST_SCRIPT_PATH_TENSORFLOW=os.path.join(self.MODELS_PATH,'TEST_TENSORFLOW_{}.sh'.format(TENSORFLOW_MODEL))
+            self.TEST_PATH_TENSORFLOW=os.path.abspath('resources')
+            f=open(self.TEST_SCRIPT_PATH_TENSORFLOW,'w')
+            f.writelines(f'cd {self.TEST_PATH_TENSORFLOW}\n')
+            f.writelines(f'python3 TENSORFLOW_MULTICLASS.py --SETTINGS_PATH="{SAVED_SETTINGS_PATH}" --MODEL_TYPE="{TENSORFLOW_MODEL}"\n')
+            f.close()
+
+            #INFERENCE TENSORFLOW
+            self.INFERENCE_SCRIPT_PATH_TENSORFLOW=os.path.join(self.MODELS_PATH,'INFERENCE_TENSORFLOW_{}.sh'.format(TENSORFLOW_MODEL))
+            self.INFERENCE_PATH_TENSORFLOW=os.path.abspath('resources')
+            f=open(self.INFERENCE_SCRIPT_PATH_TENSORFLOW,'w')
+            f.writelines(f'cd {self.INFERENCE_PATH_TENSORFLOW}\n')
+            f.writelines(f'python3 INFERENCE_TENSORFLOW.py --SETTINGS_PATH="{SAVED_SETTINGS_PATH}" --MODEL_TYPE="{TENSORFLOW_MODEL}"\n')
+            f.close()
+
         #TRAIN
         self.TRAIN_SCRIPT_PATH=os.path.join(self.MODELS_PATH,'TRAIN_PYTORCH.sh')
         self.TRAIN_PATH=os.path.abspath('resources')
         f=open(self.TRAIN_SCRIPT_PATH,'w')
         f.writelines(f'cd {self.TRAIN_PATH}\n')
-        f.writelines(f'python3 PYTORCH_MULTICLASS.py --SETTINGS_PATH="{self.SAVED_SETTINGS_PATH}"\n')
+        f.writelines(f'python3 PYTORCH_MULTICLASS.py --SETTINGS_PATH="{SAVED_SETTINGS_PATH}" --MODEL_TYPE="{self.USER_SELECTION_PYTORCH.get()}" --TRAIN\n')
         f.close()
 
         #TRAIN TFLITE
@@ -792,7 +843,7 @@ class classify_chips:
         self.TRAIN_PATH_TENSORFLOW=os.path.abspath('resources')
         f=open(self.TRAIN_SCRIPT_PATH_TENSORFLOW,'w')
         f.writelines(f'cd {self.TRAIN_PATH_TENSORFLOW}\n')
-        f.writelines(f'python3 TENSORFLOW_MULTICLASS.py --SETTINGS_PATH="{self.SAVED_SETTINGS_PATH}"\n')
+        f.writelines(f'python3 TENSORFLOW_MULTICLASS.py --SETTINGS_PATH="{SAVED_SETTINGS_PATH}" --MODEL_TYPE="{self.USER_SELECTION_TENSORFLOW.get()}" --TRAIN\n')
         f.close()
 
         #TEST
@@ -800,7 +851,7 @@ class classify_chips:
         self.TEST_PATH=os.path.abspath('resources')
         f=open(self.TEST_SCRIPT_PATH,'w')
         f.writelines(f'cd {self.TEST_PATH}\n')
-        f.writelines(f'python3 PYTORCH_MULTICLASS.py --SETTINGS_PATH="{self.SAVED_SETTINGS_PATH}"\n')
+        f.writelines(f'python3 PYTORCH_MULTICLASS.py --SETTINGS_PATH="{SAVED_SETTINGS_PATH}" --MODEL_TYPE="{self.USER_SELECTION_PYTORCH.get()}"\n')
         f.close()
 
         #TEST TFLITE
@@ -808,7 +859,7 @@ class classify_chips:
         self.TEST_PATH_TENSORFLOW=os.path.abspath('resources')
         f=open(self.TEST_SCRIPT_PATH_TENSORFLOW,'w')
         f.writelines(f'cd {self.TEST_PATH_TENSORFLOW}\n')
-        f.writelines(f'python3 TENSORFLOW_MULTICLASS.py --SETTINGS_PATH="{self.SAVED_SETTINGS_PATH}"\n')
+        f.writelines(f'python3 TENSORFLOW_MULTICLASS.py --SETTINGS_PATH="{SAVED_SETTINGS_PATH}" --MODEL_TYPE="{self.USER_SELECTION_TENSORFLOW.get()}"\n')
         f.close()
 
         #INFERENCE
@@ -816,7 +867,7 @@ class classify_chips:
         self.INFERENCE_PATH=os.path.abspath('resources')
         f=open(self.INFERENCE_SCRIPT_PATH,'w')
         f.writelines(f'cd {self.INFERENCE_PATH}\n')
-        f.writelines(f'python3 INFERENCE_PYTORCH.py --SETTINGS_PATH="{self.SAVED_SETTINGS_PATH}"\n')
+        f.writelines(f'python3 INFERENCE_PYTORCH.py --SETTINGS_PATH="{SAVED_SETTINGS_PATH}" --MODEL_TYPE="{self.USER_SELECTION_PYTORCH.get()}"\n')
         f.close()
 
         #INFERENCE TENSORFLOW
@@ -824,7 +875,7 @@ class classify_chips:
         self.INFERENCE_PATH_TENSORFLOW=os.path.abspath('resources')
         f=open(self.INFERENCE_SCRIPT_PATH_TENSORFLOW,'w')
         f.writelines(f'cd {self.INFERENCE_PATH_TENSORFLOW}\n')
-        f.writelines(f'python3 INFERENCE_TENSORFLOW.py --SETTINGS_PATH="{self.SAVED_SETTINGS_PATH}"\n')
+        f.writelines(f'python3 INFERENCE_TENSORFLOW.py --SETTINGS_PATH="{SAVED_SETTINGS_PATH}" --MODEL_TYPE="{self.USER_SELECTION_TENSORFLOW.get()}"\n')
         f.close()
 
 
