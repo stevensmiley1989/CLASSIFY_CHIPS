@@ -7,11 +7,6 @@ CLASSIFY_CHIPS.py is GUI for creating custom PyTorch/Tensorflow Image Classifier
 
 It is written in Python and uses Tkinter for its graphical interface.
 
-Prerequisites
-------------------
-see requirements.txt
-
-~~~~~~~
 
 Installation
 ------------------
@@ -20,9 +15,9 @@ Installation
 Python 3 + Tkinter
 .. code:: shell
     cd ~/
-    python3 -m venv venv_CLASSIFIER_CHIPS
-    source venv_CLASSIFIER_CHIPS/bin/activate
-    cd CLASSIFIER_CHIPS
+    python3 -m venv venv_CLASSIFY_CHIPS
+    source venv_CLASSIFY_CHIPS/bin/activate
+    cd CLASSIFY_CHIPS
     pip3 install -r requirements.txt
 
 ~~~~~~~
