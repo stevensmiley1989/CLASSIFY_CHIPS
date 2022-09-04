@@ -16,6 +16,9 @@ Ensure you put the "tf2-preview_mobilenet_v2_feature_vector_4" weights in the "r
 Ensure you put the "resnet50-0676ba61.pth" weights in the "resources" directory.  You can get these weights from:
 ["resnet50-0676ba61.pth"](https://drive.google.com/file/d/1TN96v1yxSv3PY5CM1Q37y0mdxUTLm2gL/view?usp=sharing)
 
+Ensure your "resources" has the following file structure:
+![Ensure your resources has the following file structure:](https://github.com/stevensmiley1989/CLASSIFY_CHIPS/blob/main/misc/CLASSIFY_CHIPS_Screenshot_resources.png)
+
 ------------------
 
 Installation
