@@ -94,13 +94,16 @@ else:
         open_cmd='xdg-open'
     else:
         open_cmd='start'
-#pprint(cfg_vanilla)
+if os.path.exists('libs/open_cmd.py'):
+    from libs import open_cmd
+    open_cmd=open_cmd.open_cmd
+
 global PROCEED,RELOAD
 PROCEED=False
 RELOAD=False
 class main_entry:
     global SAVED_SETTINGS_PATH
-    def __init__(self,root_tk):
+    def __init__(self,root_tk,SAVED_SETTINGS_PATH):
         self.root=root_tk
         self.root.bind('<Escape>',self.close)
         self.root.wm_iconphoto(False,ImageTk.PhotoImage(Image.open("resources/icons/appC.png")))
@@ -143,6 +146,7 @@ class main_entry:
         self.canvas_columnspan=50
         self.canvas_rowspan=50
         self.root_background_img=r"misc/gradient_yellow.png"
+        self.SAVED_SETTINGS_PATH=SAVED_SETTINGS_PATH
         
         self.INITIAL_CHECK()
     def INITIAL_CHECK(self):
@@ -167,7 +171,11 @@ class main_entry:
         self.SETTINGS_FILE_LIST=self.files_keep
 
 
-        self.USER=""
+        #self.USER=""
+        if os.path.exists(self.SAVED_SETTINGS_PATH) and os.path.exists(os.path.join('libs',os.path.basename(SAVED_SETTINGS_PATH))):
+            print(f'This already existed so we will copy it over from {self.SAVED_SETTINGS_PATH} to libs')
+            shutil.copy(self.SAVED_SETTINGS_PATH,'libs')
+        self.USER=os.path.basename(self.SAVED_SETTINGS_PATH)
         self.USER_SELECTION=tk.StringVar()
         self.dropdown_menu()
         self.submit_label=Button(self.root,text='Submit',command=self.submit,bg=self.root_fg,fg=self.root_bg,font=('Arial',12))
@@ -1008,10 +1016,16 @@ class classify_chips:
         os.system(cmd_i)         
 
 if __name__=='__main__':
+    import argparse
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--SETTINGS_PATH",dest='SETTINGS_PATH',type=str,default="None",help='path to SETTINGS.py')
+    global args
+    args = vars(ap.parse_args())
+    SAVED_SETTINGS_PATH=args['SETTINGS_PATH']
     while return_to_main==True:
         return_to_main=False
         root_tk=tk.Tk()
-        main_resnet=main_entry(root_tk)
+        main_resnet=main_entry(root_tk,SAVED_SETTINGS_PATH)
         main_resnet.root.mainloop()
         del main_resnet
         if PROCEED==True:
