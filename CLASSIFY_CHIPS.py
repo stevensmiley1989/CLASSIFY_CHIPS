@@ -178,9 +178,9 @@ class main_entry:
         self.USER=os.path.basename(self.SAVED_SETTINGS_PATH)
         self.USER_SELECTION=tk.StringVar()
         self.dropdown_menu()
-        self.submit_label=Button(self.root,text='Submit',command=self.submit,bg=self.root_fg,fg=self.root_bg,font=('Arial',12))
+        self.submit_label=Button(self.frame_table,text='Submit',command=self.submit,bg=self.root_fg,fg=self.root_bg,font=('Arial',12))
         self.submit_label.grid(row=1,column=5,sticky='se')
-        self.delete_label=Button(self.root,text='Delete',command=self.popupWindow_delete,bg=self.root_bg,fg=self.root_fg,font=('Arial',12))
+        self.delete_label=Button(self.frame_table,text='Delete',command=self.popupWindow_delete,bg=self.root_bg,fg=self.root_fg,font=('Arial',12))
         self.delete_label.grid(row=2,column=5,sticky='se')
 
             
@@ -226,10 +226,10 @@ class main_entry:
             self.USER_SELECTION.set(self.USER)
         else:
             self.USER_SELECTION.set(self.SETTINGS_FILE_LIST[0])
-        self.dropdown=tk.OptionMenu(self.root,self.USER_SELECTION,*self.SETTINGS_FILE_LIST)
+        self.dropdown=tk.OptionMenu(self.frame_table,self.USER_SELECTION,*self.SETTINGS_FILE_LIST)
         self.dropdown.grid(row=1,column=9,sticky='sw')
         
-        self.dropdown_label=Button(self.root,image=self.icon_single_file,command=self.run_cmd_libs,bg=self.root_bg,fg=self.root_fg,font=('Arial',12))
+        self.dropdown_label=Button(self.frame_table,image=self.icon_single_file,command=self.run_cmd_libs,bg=self.root_bg,fg=self.root_fg,font=('Arial',12))
         self.dropdown_label.grid(row=1,column=8,sticky='sw')
     
     def run_cmd_libs(self):
@@ -302,13 +302,70 @@ class main_entry:
         SAVED_SETTINGS_PATH=os.path.join('libs',self.USER)
         self.close()
 
+    # def get_update_background_img(self):
+    #     self.image=Image.open(self.root_background_img)
+    #     self.image=self.image.resize((self.root_W,self.root_H),Image.ANTIALIAS)
+    #     self.bg=ImageTk.PhotoImage(self.image)
+    #     self.canvas=tk.Canvas(self.root,width=self.root_W,height=self.root_H)
+    #     self.canvas.grid(row=0,column=0,columnspan=self.canvas_columnspan,rowspan=self.canvas_rowspan,sticky='nw')
+    #     self.canvas.create_image(0,0,image=self.bg,anchor='nw')
     def get_update_background_img(self):
+        global frame_table
         self.image=Image.open(self.root_background_img)
         self.image=self.image.resize((self.root_W,self.root_H),Image.ANTIALIAS)
         self.bg=ImageTk.PhotoImage(self.image)
-        self.canvas=tk.Canvas(self.root,width=self.root_W,height=self.root_H)
-        self.canvas.grid(row=0,column=0,columnspan=self.canvas_columnspan,rowspan=self.canvas_rowspan,sticky='nw')
-        self.canvas.create_image(0,0,image=self.bg,anchor='nw')
+        # self.canvas_og=tk.Canvas(self.frame_table1,width=self.root_W,height=self.root_H)
+        # self.canvas_og.grid(row=0,column=0,columnspan=self.canvas_columnspan,rowspan=self.canvas_rowspan,sticky='nw')
+        # self.canvas_og.create_image(0,0,image=self.bg,anchor='nw')
+        self.root.columnconfigure(0,weight=1)
+        self.root.rowconfigure(0,weight=1)
+        self.FMas=tk.Frame(self.root,bg='Black')
+        self.FMas.grid(sticky=(tk.N,tk.E,tk.S,tk.W),padx=20,pady=20)
+        self.FMas.columnconfigure(0,weight=1)
+        self.frame_canvas=tk.Frame(self.FMas)
+        self.frame_canvas.grid(row=0,column=0,sticky='nw')
+        self.frame_canvas.grid_rowconfigure(0,weight=1)
+        self.frame_canvas.grid_columnconfigure(0,weight=1)
+        self.frame_canvas.grid_propagate(False)
+
+        self.canvas=tk.Canvas(self.frame_canvas,bg='black')
+        self.canvas.grid(row=0,column=0,sticky='news')
+        self.label = tk.Label(self.canvas, image = self.bg)
+        self.label.grid(row=0,column=0,sticky='news')
+        self.style3=ttk.Style()
+        self.style3.configure('Vertical.TScrollbar',
+                            background='gold',
+                            foreground='black',
+                            arrowcolor='black',
+                            activebackground='yellow')
+        self.style3.configure('Horizontal.TScrollbar',
+                            background='gold',
+                            foreground='black',
+                            arrowcolor='black',
+                            activebackground='yellow')
+        self.vsbar=ttk.Scrollbar(self.frame_canvas,orient="vertical",command=self.canvas.yview,style="Vertical.TScrollbar")
+        self.vsbar.grid(row=0,column=1,sticky='nes',pady=1)
+        self.hsbar=ttk.Scrollbar(self.frame_canvas,orient="horizontal",command=self.canvas.xview,style="Horizontal.TScrollbar")
+
+        self.hsbar.grid(row=0,column=0,sticky='new',padx=1)
+        self.canvas.configure(yscrollcommand=self.vsbar.set)
+        self.canvas.configure(xscrollcommand=self.hsbar.set)
+        self.frame_table=tk.Frame(self.canvas,bg='black',padx=20,pady=20)
+
+        self.canvas.create_window((0,0),window=self.frame_table,anchor='nw')
+
+
+        total_width=self.root_W*1.#080#width_i+width_j+self.hsbar.winfo_width()
+        total_height=self.root_H*1.#height_i+height_j+self.vsbar.winfo_height()
+        # Create a Label Widget to display the text or Image
+
+        self.canvas.create_image((total_width*0.75,total_height*0.75),image=self.bg,anchor='nw')
+        print('total_width',total_width)
+        print('total_height',total_height)
+        self.frame_canvas.config(width=total_width,height=total_height)
+        self.canvas.config(scrollregion=self.canvas.bbox('all'))
+        frame_table=self.frame_table
+
     def close(self):
         self.root.destroy()
     def cleanup(self):
@@ -382,73 +439,73 @@ class classify_chips:
         self.dropdown_menu_TENSORFLOW=None
         self.dropdown_menu_PYTORCH=None
     #Buttons
-        self.save_settings_button=Button(self.root,image=self.icon_save_settings,command=self.save_settings,bg=self.root_bg,fg=self.root_fg)
+        self.save_settings_button=Button(self.frame_table,image=self.icon_save_settings,command=self.save_settings,bg=self.root_bg,fg=self.root_fg)
         self.save_settings_button.grid(row=1,column=4,sticky='se')
-        self.save_settings_note=tk.Label(self.root,text='Save Settings',bg=self.root_bg,fg=self.root_fg,font=("Arial", 9))
+        self.save_settings_note=tk.Label(self.frame_table,text='Save Settings',bg=self.root_bg,fg=self.root_fg,font=("Arial", 9))
         self.save_settings_note.grid(row=2,column=4,sticky='ne')
-        self.return_to_main_button=Button(self.root,text='Return to Main Menu',command=self.return_to_main,bg=self.root_fg,fg=self.root_bg)
+        self.return_to_main_button=Button(self.frame_table,text='Return to Main Menu',command=self.return_to_main,bg=self.root_fg,fg=self.root_bg)
         self.return_to_main_button.grid(row=0,column=0,sticky='se')
 
-        self.OPEN_save_settings_button=Button(self.root,text="OPEN Saved Settings",command=self.OPEN_SAVED_SETTINGS,bg=self.root_fg,fg=self.root_bg)
+        self.OPEN_save_settings_button=Button(self.frame_table,text="OPEN Saved Settings",command=self.OPEN_SAVED_SETTINGS,bg=self.root_fg,fg=self.root_bg)
         self.OPEN_save_settings_button.grid(row=1,column=0,sticky='se')
-        self.LOAD_save_settings_button=Button(self.root,text="LOAD Saved Settings",command=self.LOAD_SAVED_SETTINGS,bg=self.root_fg,fg=self.root_bg)
+        self.LOAD_save_settings_button=Button(self.frame_table,text="LOAD Saved Settings",command=self.LOAD_SAVED_SETTINGS,bg=self.root_fg,fg=self.root_bg)
         self.LOAD_save_settings_button.grid(row=2,column=0,sticky='se')
 
 
         self.PREFIX_VAR=tk.StringVar()
         self.PREFIX_VAR.set(self.PREFIX)
-        self.PREFIX_entry=tk.Entry(self.root,textvariable=self.PREFIX_VAR)
+        self.PREFIX_entry=tk.Entry(self.frame_table,textvariable=self.PREFIX_VAR)
         self.PREFIX_entry.grid(row=3,column=0,columnspan=5,sticky='sew')
-        self.PREFIX_label=tk.Label(self.root,text='PREFIX',bg=self.root_bg,fg=self.root_fg,font=('Arial',7))
+        self.PREFIX_label=tk.Label(self.frame_table,text='PREFIX',bg=self.root_bg,fg=self.root_fg,font=('Arial',7))
         self.PREFIX_label.grid(row=4,column=0,sticky='ne')
 
         self.WIDTH_NUM_VAR=tk.StringVar()
         self.WIDTH_NUM_VAR.set(self.chipW)
-        self.WIDTH_NUM_entry=tk.Entry(self.root,textvariable=self.WIDTH_NUM_VAR)
+        self.WIDTH_NUM_entry=tk.Entry(self.frame_table,textvariable=self.WIDTH_NUM_VAR)
         self.WIDTH_NUM_entry.grid(row=5,column=0,sticky='se')
-        self.WIDTH_NUM_label=tk.Label(self.root,text='chipW',bg=self.root_bg,fg=self.root_fg,font=('Arial',7))
+        self.WIDTH_NUM_label=tk.Label(self.frame_table,text='chipW',bg=self.root_bg,fg=self.root_fg,font=('Arial',7))
         self.WIDTH_NUM_label.grid(row=6,column=0,sticky='ne')
 
         self.HEIGHT_NUM_VAR=tk.StringVar()
         self.HEIGHT_NUM_VAR.set(self.chipH)
-        self.HEIGHT_NUM_entry=tk.Entry(self.root,textvariable=self.HEIGHT_NUM_VAR)
+        self.HEIGHT_NUM_entry=tk.Entry(self.frame_table,textvariable=self.HEIGHT_NUM_VAR)
         self.HEIGHT_NUM_entry.grid(row=7,column=0,sticky='se')
-        self.HEIGHT_NUM_label=tk.Label(self.root,text='chipH',bg=self.root_bg,fg=self.root_fg,font=('Arial',7))
+        self.HEIGHT_NUM_label=tk.Label(self.frame_table,text='chipH',bg=self.root_bg,fg=self.root_fg,font=('Arial',7))
         self.HEIGHT_NUM_label.grid(row=8,column=0,sticky='ne')
 
         self.EPOCHS_NUM_VAR=tk.StringVar()
         self.EPOCHS_NUM_VAR.set(self.epochs)
-        self.EPOCHS_entry=tk.Entry(self.root,textvariable=self.EPOCHS_NUM_VAR)
+        self.EPOCHS_entry=tk.Entry(self.frame_table,textvariable=self.EPOCHS_NUM_VAR)
         self.EPOCHS_entry.grid(row=9,column=0,sticky='se')
-        self.EPOCHS_label=tk.Label(self.root,text='epochs',bg=self.root_bg,fg=self.root_fg,font=('Arial',7))
+        self.EPOCHS_label=tk.Label(self.frame_table,text='epochs',bg=self.root_bg,fg=self.root_fg,font=('Arial',7))
         self.EPOCHS_label.grid(row=10,column=0,sticky='ne')
 
         self.BATCH_SIZE_VAR=tk.StringVar()
         self.BATCH_SIZE_VAR.set(self.batch_size)
-        self.BATCH_SIZE_entry=tk.Entry(self.root,textvariable=self.BATCH_SIZE_VAR)
+        self.BATCH_SIZE_entry=tk.Entry(self.frame_table,textvariable=self.BATCH_SIZE_VAR)
         self.BATCH_SIZE_entry.grid(row=11,column=0,sticky='se')
-        self.BATCH_SIZE_label=tk.Label(self.root,text='batch_size',bg=self.root_bg,fg=self.root_fg,font=('Arial',7))
+        self.BATCH_SIZE_label=tk.Label(self.frame_table,text='batch_size',bg=self.root_bg,fg=self.root_fg,font=('Arial',7))
         self.BATCH_SIZE_label.grid(row=12,column=0,sticky='ne')
 
         self.TRAIN_TEST_SPLIT_VAR=tk.StringVar()
         self.TRAIN_TEST_SPLIT_VAR.set(self.TRAIN_TEST_SPLIT)
-        self.TRAIN_TEST_SPLIT_entry=tk.Entry(self.root,textvariable=self.TRAIN_TEST_SPLIT_VAR)
+        self.TRAIN_TEST_SPLIT_entry=tk.Entry(self.frame_table,textvariable=self.TRAIN_TEST_SPLIT_VAR)
         self.TRAIN_TEST_SPLIT_entry.grid(row=13,column=0,sticky='se')
-        self.TRAIN_TEST_SPLIT_label=tk.Label(self.root,text='TRAIN_TEST_SPLIT',bg=self.root_bg,fg=self.root_fg,font=('Arial',7))
+        self.TRAIN_TEST_SPLIT_label=tk.Label(self.frame_table,text='TRAIN_TEST_SPLIT',bg=self.root_bg,fg=self.root_fg,font=('Arial',7))
         self.TRAIN_TEST_SPLIT_label.grid(row=14,column=0,sticky='ne')
 
         self.PORT_VAR=tk.StringVar()
         self.PORT_VAR.set(self.PORT)
-        self.PORT_entry=tk.Entry(self.root,textvariable=self.PORT_VAR)
+        self.PORT_entry=tk.Entry(self.frame_table,textvariable=self.PORT_VAR)
         self.PORT_entry.grid(row=15,column=0,sticky='se')
-        self.PORT_label=tk.Label(self.root,text='PORT',bg=self.root_bg,fg=self.root_fg,font=('Arial',7))
+        self.PORT_label=tk.Label(self.frame_table,text='PORT',bg=self.root_bg,fg=self.root_fg,font=('Arial',7))
         self.PORT_label.grid(row=16,column=0,sticky='ne')
 
         self.HOST_VAR=tk.StringVar()
         self.HOST_VAR.set(self.HOST)
-        self.HOST_entry=tk.Entry(self.root,textvariable=self.HOST_VAR)
+        self.HOST_entry=tk.Entry(self.frame_table,textvariable=self.HOST_VAR)
         self.HOST_entry.grid(row=17,column=0,sticky='se')
-        self.HOST_label=tk.Label(self.root,text='HOST',bg=self.root_bg,fg=self.root_fg,font=('Arial',7))
+        self.HOST_label=tk.Label(self.frame_table,text='HOST',bg=self.root_bg,fg=self.root_fg,font=('Arial',7))
         self.HOST_label.grid(row=18,column=0,sticky='ne')
 
         self.dropdown_menu_TENSORFLOW_FUNC()
@@ -463,10 +520,10 @@ class classify_chips:
         except:
             self.IP_ADDRESS="127.0.0.1"
         if self.IP_ADDRESS!=self.HOST:
-            self.HOST_note=tk.Label(self.root,text=f'WARNING! LOCAL IP ADDRESS is {self.IP_ADDRESS}',bg=self.root_bg,fg=self.root_fg,font=('Arial',10))
+            self.HOST_note=tk.Label(self.frame_table,text=f'WARNING! LOCAL IP ADDRESS is {self.IP_ADDRESS}',bg=self.root_bg,fg=self.root_fg,font=('Arial',10))
             self.HOST_note.grid(row=17,column=1,sticky='e')
         else:
-            self.HOST_note=tk.Label(self.root,text=f'Same as LOCAL IP ADDRESS of {self.IP_ADDRESS}',bg=self.root_bg,fg=self.root_fg,font=('Arial',7))
+            self.HOST_note=tk.Label(self.frame_table,text=f'Same as LOCAL IP ADDRESS of {self.IP_ADDRESS}',bg=self.root_bg,fg=self.root_fg,font=('Arial',7))
             self.HOST_note.grid(row=17,column=1,sticky='e')           
 
         self.open_MODELS_PATH_label_var=tk.StringVar()
@@ -514,10 +571,10 @@ class classify_chips:
         self.TENSORFLOW_OPTIONS=['imagenet_resnet_v1_101_feature_vector_5','tf2-preview_mobilenet_v2_feature_vector_4']
 
         self.USER_SELECTION_TENSORFLOW.set(self.TENSORFLOW_OPTIONS[0])
-        self.dropdown_TENSORFLOW=tk.OptionMenu(self.root,self.USER_SELECTION_TENSORFLOW,*self.TENSORFLOW_OPTIONS)
+        self.dropdown_TENSORFLOW=tk.OptionMenu(self.frame_table,self.USER_SELECTION_TENSORFLOW,*self.TENSORFLOW_OPTIONS)
         self.dropdown_TENSORFLOW.grid(row=10,column=6,sticky='nw')
         
-        self.dropdown_label_TENSORFLOW=tk.Label(self.root,text="TENSORFLOW MODEL OPTIONS",bg=self.root_bg,fg=self.root_fg,font=('Arial',8))
+        self.dropdown_label_TENSORFLOW=tk.Label(self.frame_table,text="TENSORFLOW MODEL OPTIONS",bg=self.root_bg,fg=self.root_fg,font=('Arial',8))
         self.dropdown_label_TENSORFLOW.grid(row=9,column=6,sticky='sw')
 
     def dropdown_menu_PYTORCH_FUNC(self):
@@ -530,10 +587,10 @@ class classify_chips:
         self.PYTORCH_OPTIONS=['resnet_50']
 
         self.USER_SELECTION_PYTORCH.set(self.PYTORCH_OPTIONS[0])
-        self.dropdown_PYTORCH=tk.OptionMenu(self.root,self.USER_SELECTION_PYTORCH,*self.PYTORCH_OPTIONS)
+        self.dropdown_PYTORCH=tk.OptionMenu(self.frame_table,self.USER_SELECTION_PYTORCH,*self.PYTORCH_OPTIONS)
         self.dropdown_PYTORCH.grid(row=10,column=5,sticky='nw')
         
-        self.dropdown_label_PYTORCH=tk.Label(self.root,text="PYTORCH MODEL OPTIONS",bg=self.root_bg,fg=self.root_fg,font=('Arial',8))
+        self.dropdown_label_PYTORCH=tk.Label(self.frame_table,text="PYTORCH MODEL OPTIONS",bg=self.root_bg,fg=self.root_fg,font=('Arial',8))
         self.dropdown_label_PYTORCH.grid(row=9,column=5,sticky='sw')
 
     def selection(self,var_i):
@@ -573,18 +630,18 @@ class classify_chips:
         print('Found a total of {} classes:'.format(len(target_items)))
         j=10
         k=10
-        self.targets_label_dic[j]=tk.Label(self.root,text='CLASS',bg=self.root_fg,fg=self.root_bg,font=("Arial", 10))
+        self.targets_label_dic[j]=tk.Label(self.frame_table,text='CLASS',bg=self.root_fg,fg=self.root_bg,font=("Arial", 10))
         self.targets_label_dic[j].grid(row=j,column=5+k,sticky='se')
-        self.targets_label_count_dic[j]=tk.Label(self.root,text='COUNT',bg=self.root_fg,fg=self.root_bg,font=("Arial", 10))
+        self.targets_label_count_dic[j]=tk.Label(self.frame_table,text='COUNT',bg=self.root_fg,fg=self.root_bg,font=("Arial", 10))
         self.targets_label_count_dic[j].grid(row=j,column=6+k,sticky='se')  
         j+=1
         for  i,item_i in enumerate(target_items):
                 i=i+j
-                self.targets_label_dic[i]=tk.Label(self.root,text=item_i,bg=self.root_bg,fg=self.root_fg,font=("Arial", 8))
+                self.targets_label_dic[i]=tk.Label(self.frame_table,text=item_i,bg=self.root_bg,fg=self.root_fg,font=("Arial", 8))
                 self.targets_label_dic[i].grid(row=i+1,column=5+k,sticky='ne')
                 count_i=len(os.listdir(os.path.join(self.data_dir_train,item_i)))
                 self.targets_count_dic[i]=count_i
-                self.targets_label_count_dic[i]=tk.Label(self.root,text=self.targets_count_dic[i],bg=self.root_bg,fg=self.root_fg,font=("Arial", 8))
+                self.targets_label_count_dic[i]=tk.Label(self.frame_table,text=self.targets_count_dic[i],bg=self.root_bg,fg=self.root_fg,font=("Arial", 8))
                 self.targets_label_count_dic[i].grid(row=i+1,column=6+k,sticky='ne')               
                 i+=1
                 print(f' {i} = {item_i}')
@@ -597,7 +654,7 @@ class classify_chips:
             pass
         self.USER_SELECTION_TARGETS=tk.StringVar()
         self.USER_SELECTION_TARGETS.set(self.targets_list[0])
-        #self.dropdown_targets=tk.OptionMenu(self.root,self.USER_SELECTION_TARGETS,*self.targets_list)
+        #self.dropdown_targets=tk.OptionMenu(self.frame_table,self.USER_SELECTION_TARGETS,*self.targets_list)
         #self.dropdown_targets.grid(row=19,column=1,sticky='sw')
         
 
@@ -611,12 +668,12 @@ class classify_chips:
         except:
             pass
 
-        self.open_MODELS_PATH_button=Button(self.root,image=self.icon_folder,command=partial(self.select_folder,self.MODELS_PATH,'save path',self.open_MODELS_PATH_label_var),bg=self.root_bg,fg=self.root_fg)
+        self.open_MODELS_PATH_button=Button(self.frame_table,image=self.icon_folder,command=partial(self.select_folder,self.MODELS_PATH,'save path',self.open_MODELS_PATH_label_var),bg=self.root_bg,fg=self.root_fg)
         self.open_MODELS_PATH_button.grid(row=1,column=5,sticky='se')
-        self.open_MODELS_PATH_note=tk.Label(self.root,text="MODEL PATH dir",bg=self.root_bg,fg=self.root_fg,font=("Arial", 8))
+        self.open_MODELS_PATH_note=tk.Label(self.frame_table,text="MODEL PATH dir",bg=self.root_bg,fg=self.root_fg,font=("Arial", 8))
         self.open_MODELS_PATH_note.grid(row=2,column=5,sticky='ne')
         cmd_i=open_cmd+" '{}'".format(self.open_MODELS_PATH_label_var.get())
-        self.open_MODELS_PATH_label=Button(self.root,textvariable=self.open_MODELS_PATH_label_var, command=partial(self.run_cmd,cmd_i),bg=self.root_fg,fg=self.root_bg,font=("Arial", 8))
+        self.open_MODELS_PATH_label=Button(self.frame_table,textvariable=self.open_MODELS_PATH_label_var, command=partial(self.run_cmd,cmd_i),bg=self.root_fg,fg=self.root_bg,font=("Arial", 8))
         self.open_MODELS_PATH_label.grid(row=1,column=6,columnspan=50,sticky='sw')
 
         try:
@@ -628,12 +685,12 @@ class classify_chips:
         except:
             pass
 
-        self.open_DATA_DIR_PATH_button=Button(self.root,image=self.icon_folder,command=partial(self.select_folder,self.data_dir,'save path',self.open_DATA_DIR_PATH_label_var),bg=self.root_bg,fg=self.root_fg)
+        self.open_DATA_DIR_PATH_button=Button(self.frame_table,image=self.icon_folder,command=partial(self.select_folder,self.data_dir,'save path',self.open_DATA_DIR_PATH_label_var),bg=self.root_bg,fg=self.root_fg)
         self.open_DATA_DIR_PATH_button.grid(row=3,column=5,sticky='se')
-        self.open_DATA_DIR_PATH_note=tk.Label(self.root,text="data dir",bg=self.root_bg,fg=self.root_fg,font=("Arial", 8))
+        self.open_DATA_DIR_PATH_note=tk.Label(self.frame_table,text="data dir",bg=self.root_bg,fg=self.root_fg,font=("Arial", 8))
         self.open_DATA_DIR_PATH_note.grid(row=4,column=5,sticky='ne')
         cmd_i=open_cmd+" '{}'".format(self.open_DATA_DIR_PATH_label_var.get())
-        self.open_DATA_DIR_PATH_label=Button(self.root,textvariable=self.open_DATA_DIR_PATH_label_var, command=partial(self.run_cmd,cmd_i),bg=self.root_fg,fg=self.root_bg,font=("Arial", 8))
+        self.open_DATA_DIR_PATH_label=Button(self.frame_table,textvariable=self.open_DATA_DIR_PATH_label_var, command=partial(self.run_cmd,cmd_i),bg=self.root_fg,fg=self.root_bg,font=("Arial", 8))
         self.open_DATA_DIR_PATH_label.grid(row=3,column=6,columnspan=50,sticky='sw')
 
         try:
@@ -645,12 +702,12 @@ class classify_chips:
         except:
             pass
 
-        self.open_DATA_DIR_TRAIN_PATH_button=Button(self.root,image=self.icon_folder,command=partial(self.select_folder,self.data_dir_train,'save path',self.open_DATA_DIR_TRAIN_PATH_label_var),bg=self.root_bg,fg=self.root_fg)
+        self.open_DATA_DIR_TRAIN_PATH_button=Button(self.frame_table,image=self.icon_folder,command=partial(self.select_folder,self.data_dir_train,'save path',self.open_DATA_DIR_TRAIN_PATH_label_var),bg=self.root_bg,fg=self.root_fg)
         self.open_DATA_DIR_TRAIN_PATH_button.grid(row=5,column=5,sticky='se')
-        self.open_DATA_DIR_TRAIN_PATH_note=tk.Label(self.root,text="data dir train",bg=self.root_bg,fg=self.root_fg,font=("Arial", 8))
+        self.open_DATA_DIR_TRAIN_PATH_note=tk.Label(self.frame_table,text="data dir train",bg=self.root_bg,fg=self.root_fg,font=("Arial", 8))
         self.open_DATA_DIR_TRAIN_PATH_note.grid(row=6,column=5,sticky='ne')
         cmd_i=open_cmd+" '{}'".format(self.open_DATA_DIR_TRAIN_PATH_label_var.get())
-        self.open_DATA_DIR_TRAIN_PATH_label=Button(self.root,textvariable=self.open_DATA_DIR_TRAIN_PATH_label_var, command=partial(self.run_cmd,cmd_i),bg=self.root_fg,fg=self.root_bg,font=("Arial", 8))
+        self.open_DATA_DIR_TRAIN_PATH_label=Button(self.frame_table,textvariable=self.open_DATA_DIR_TRAIN_PATH_label_var, command=partial(self.run_cmd,cmd_i),bg=self.root_fg,fg=self.root_bg,font=("Arial", 8))
         self.open_DATA_DIR_TRAIN_PATH_label.grid(row=5,column=6,columnspan=50,sticky='sw')
 
         try:
@@ -662,12 +719,12 @@ class classify_chips:
         except:
             pass
 
-        self.open_DATA_DIR_TEST_PATH_button=Button(self.root,image=self.icon_folder,command=partial(self.select_folder,self.data_dir_test,'save path',self.open_DATA_DIR_TEST_PATH_label_var),bg=self.root_bg,fg=self.root_fg)
+        self.open_DATA_DIR_TEST_PATH_button=Button(self.frame_table,image=self.icon_folder,command=partial(self.select_folder,self.data_dir_test,'save path',self.open_DATA_DIR_TEST_PATH_label_var),bg=self.root_bg,fg=self.root_fg)
         self.open_DATA_DIR_TEST_PATH_button.grid(row=7,column=5,sticky='se')
-        self.open_DATA_DIR_TEST_PATH_note=tk.Label(self.root,text="data dir test",bg=self.root_bg,fg=self.root_fg,font=("Arial", 8))
+        self.open_DATA_DIR_TEST_PATH_note=tk.Label(self.frame_table,text="data dir test",bg=self.root_bg,fg=self.root_fg,font=("Arial", 8))
         self.open_DATA_DIR_TEST_PATH_note.grid(row=8,column=5,sticky='ne')
         cmd_i=open_cmd+" '{}'".format(self.open_DATA_DIR_TEST_PATH_label_var.get())
-        self.open_DATA_DIR_TEST_PATH_label=Button(self.root,textvariable=self.open_DATA_DIR_TEST_PATH_label_var, command=partial(self.run_cmd,cmd_i),bg=self.root_fg,fg=self.root_bg,font=("Arial", 8))
+        self.open_DATA_DIR_TEST_PATH_label=Button(self.frame_table,textvariable=self.open_DATA_DIR_TEST_PATH_label_var, command=partial(self.run_cmd,cmd_i),bg=self.root_fg,fg=self.root_bg,font=("Arial", 8))
         self.open_DATA_DIR_TEST_PATH_label.grid(row=7,column=6,columnspan=50,sticky='sw')
 
         try:
@@ -675,23 +732,23 @@ class classify_chips:
         except:
             pass
 
-        self.CREATE_SCRIPTS_button=Button(self.root,text='CREATE SCRIPTS',command=self.CREATE_SCRIPTS,bg=self.root_bg,fg=self.root_fg)
+        self.CREATE_SCRIPTS_button=Button(self.frame_table,text='CREATE SCRIPTS',command=self.CREATE_SCRIPTS,bg=self.root_bg,fg=self.root_fg)
         self.CREATE_SCRIPTS_button.grid(row=10,column=3,sticky='se')
 
 
         self.TARGET_VAR=tk.StringVar()
         self.TARGET_VAR.set(self.target)
-        self.TARGET_entry=tk.Entry(self.root,textvariable=self.TARGET_VAR)
+        self.TARGET_entry=tk.Entry(self.frame_table,textvariable=self.TARGET_VAR)
         self.TARGET_entry.grid(row=19,column=0,columnspan=10,sticky='ew')
-        self.TARGET_label=tk.Label(self.root,text='targets',bg=self.root_bg,fg=self.root_fg,font=('Arial',7))
+        self.TARGET_label=tk.Label(self.frame_table,text='targets',bg=self.root_bg,fg=self.root_fg,font=('Arial',7))
         self.TARGET_label.grid(row=20,column=0,sticky='ne')
         self.dropdown_menu_targets()
 
         self.IGNORE_VAR=tk.StringVar()
         self.IGNORE_VAR.set(self.ignore_list_str)
-        self.IGNORE_entry=tk.Entry(self.root,textvariable=self.IGNORE_VAR)
+        self.IGNORE_entry=tk.Entry(self.frame_table,textvariable=self.IGNORE_VAR)
         self.IGNORE_entry.grid(row=21,column=0,columnspan=10,sticky='ew')
-        self.IGNORE_label=tk.Label(self.root,text='ignore_list_str',bg=self.root_bg,fg=self.root_fg,font=('Arial',7))
+        self.IGNORE_label=tk.Label(self.frame_table,text='ignore_list_str',bg=self.root_bg,fg=self.root_fg,font=('Arial',7))
         self.IGNORE_label.grid(row=22,column=0,sticky='ne')
         self.check_ignore()
 
@@ -725,32 +782,32 @@ class classify_chips:
 
     def TRAIN_BUTTONS(self):
         cmd_i=f"bash {self.TRAIN_SCRIPT_PATH}"
-        self.popup_TRAIN_button=Button(self.root,text='TRAIN PYTORCH',command=partial(self.run_cmd,cmd_i),bg=self.root_fg,fg=self.root_bg)
+        self.popup_TRAIN_button=Button(self.frame_table,text='TRAIN PYTORCH',command=partial(self.run_cmd,cmd_i),bg=self.root_fg,fg=self.root_bg)
         self.popup_TRAIN_button.grid(row=11,column=5,sticky='sw')
 
     def TEST_BUTTONS(self):
         cmd_i=f"bash {self.TEST_SCRIPT_PATH}"
-        self.popup_TEST_button=Button(self.root,text='TEST PYTORCH',command=partial(self.run_cmd,cmd_i),bg=self.root_fg,fg=self.root_bg)
+        self.popup_TEST_button=Button(self.frame_table,text='TEST PYTORCH',command=partial(self.run_cmd,cmd_i),bg=self.root_fg,fg=self.root_bg)
         self.popup_TEST_button.grid(row=12,column=5,sticky='sw')
 
     def TRAIN_BUTTONS_TENSORFLOW(self):
         cmd_i=f"bash {self.TRAIN_SCRIPT_PATH_TENSORFLOW}"
-        self.popup_TRAIN_button_TENSORFLOW=Button(self.root,text='TRAIN TENSORFLOW',command=partial(self.run_cmd,cmd_i),bg=self.root_fg,fg=self.root_bg)
+        self.popup_TRAIN_button_TENSORFLOW=Button(self.frame_table,text='TRAIN TENSORFLOW',command=partial(self.run_cmd,cmd_i),bg=self.root_fg,fg=self.root_bg)
         self.popup_TRAIN_button_TENSORFLOW.grid(row=11,column=6,sticky='sw')
 
     def TEST_BUTTONS_TENSORFLOW(self):
         cmd_i=f"bash {self.TEST_SCRIPT_PATH_TENSORFLOW}"
-        self.popup_TEST_button_TENSORFLOW=Button(self.root,text='TEST TENSORFLOW',command=partial(self.run_cmd,cmd_i),bg=self.root_fg,fg=self.root_bg)
+        self.popup_TEST_button_TENSORFLOW=Button(self.frame_table,text='TEST TENSORFLOW',command=partial(self.run_cmd,cmd_i),bg=self.root_fg,fg=self.root_bg)
         self.popup_TEST_button_TENSORFLOW.grid(row=12,column=6,sticky='sw')
 
     def INFERENCE_BUTTONS(self):
         cmd_i=f"bash {self.INFERENCE_SCRIPT_PATH}"
-        self.popup_INFERENCE_button=Button(self.root,text='INFERENCE PYTORCH',command=partial(self.run_cmd,cmd_i),bg=self.root_fg,fg=self.root_bg)
+        self.popup_INFERENCE_button=Button(self.frame_table,text='INFERENCE PYTORCH',command=partial(self.run_cmd,cmd_i),bg=self.root_fg,fg=self.root_bg)
         self.popup_INFERENCE_button.grid(row=13,column=5,sticky='sw')
 
     def INFERENCE_BUTTONS_TENSORFLOW(self):
         cmd_i=f"bash {self.INFERENCE_SCRIPT_PATH_TENSORFLOW}"
-        self.popup_INFERENCE_button_TENSORFLOW=Button(self.root,text='INFERENCE TENSORFLOW',command=partial(self.run_cmd,cmd_i),bg=self.root_fg,fg=self.root_bg)
+        self.popup_INFERENCE_button_TENSORFLOW=Button(self.frame_table,text='INFERENCE TENSORFLOW',command=partial(self.run_cmd,cmd_i),bg=self.root_fg,fg=self.root_bg)
         self.popup_INFERENCE_button_TENSORFLOW.grid(row=13,column=6,sticky='sw')
 
 
@@ -1004,13 +1061,70 @@ class classify_chips:
             self.root.title(os.path.basename(self.SAVED_SETTINGS_PATH))
         self.CREATE_BUTTONS()
 
+    # def get_update_background_img(self):
+    #     self.image=Image.open(self.root_background_img)
+    #     self.image=self.image.resize((self.root_W,self.root_H),Image.ANTIALIAS)
+    #     self.bg=ImageTk.PhotoImage(self.image)
+    #     self.canvas=tk.Canvas(self.root,width=self.root_W,height=self.root_H)
+    #     self.canvas.grid(row=0,column=0,columnspan=self.canvas_columnspan,rowspan=self.canvas_rowspan,sticky='nw')
+    #     self.canvas.create_image(0,0,image=self.bg,anchor='nw')
     def get_update_background_img(self):
+        global frame_table
         self.image=Image.open(self.root_background_img)
         self.image=self.image.resize((self.root_W,self.root_H),Image.ANTIALIAS)
         self.bg=ImageTk.PhotoImage(self.image)
-        self.canvas=tk.Canvas(self.root,width=self.root_W,height=self.root_H)
-        self.canvas.grid(row=0,column=0,columnspan=self.canvas_columnspan,rowspan=self.canvas_rowspan,sticky='nw')
-        self.canvas.create_image(0,0,image=self.bg,anchor='nw')
+        # self.canvas_og=tk.Canvas(self.frame_table1,width=self.root_W,height=self.root_H)
+        # self.canvas_og.grid(row=0,column=0,columnspan=self.canvas_columnspan,rowspan=self.canvas_rowspan,sticky='nw')
+        # self.canvas_og.create_image(0,0,image=self.bg,anchor='nw')
+        self.root.columnconfigure(0,weight=1)
+        self.root.rowconfigure(0,weight=1)
+        self.FMas=tk.Frame(self.root,bg='Black')
+        self.FMas.grid(sticky=(tk.N,tk.E,tk.S,tk.W),padx=20,pady=20)
+        self.FMas.columnconfigure(0,weight=1)
+        self.frame_canvas=tk.Frame(self.FMas)
+        self.frame_canvas.grid(row=0,column=0,sticky='nw')
+        self.frame_canvas.grid_rowconfigure(0,weight=1)
+        self.frame_canvas.grid_columnconfigure(0,weight=1)
+        self.frame_canvas.grid_propagate(False)
+
+        self.canvas=tk.Canvas(self.frame_canvas,bg='black')
+        self.canvas.grid(row=0,column=0,sticky='news')
+        self.label = tk.Label(self.canvas, image = self.bg)
+        self.label.grid(row=0,column=0,sticky='news')
+        self.style3=ttk.Style()
+        self.style3.configure('Vertical.TScrollbar',
+                            background='gold',
+                            foreground='black',
+                            arrowcolor='black',
+                            activebackground='yellow')
+        self.style3.configure('Horizontal.TScrollbar',
+                            background='gold',
+                            foreground='black',
+                            arrowcolor='black',
+                            activebackground='yellow')
+        self.vsbar=ttk.Scrollbar(self.frame_canvas,orient="vertical",command=self.canvas.yview,style="Vertical.TScrollbar")
+        self.vsbar.grid(row=0,column=1,sticky='nes',pady=1)
+        self.hsbar=ttk.Scrollbar(self.frame_canvas,orient="horizontal",command=self.canvas.xview,style="Horizontal.TScrollbar")
+
+        self.hsbar.grid(row=0,column=0,sticky='new',padx=1)
+        self.canvas.configure(yscrollcommand=self.vsbar.set)
+        self.canvas.configure(xscrollcommand=self.hsbar.set)
+        self.frame_table=tk.Frame(self.canvas,bg='black',padx=20,pady=20)
+
+        self.canvas.create_window((0,0),window=self.frame_table,anchor='nw')
+
+
+        total_width=self.root_W*1.#080#width_i+width_j+self.hsbar.winfo_width()
+        total_height=self.root_H*1.#height_i+height_j+self.vsbar.winfo_height()
+        # Create a Label Widget to display the text or Image
+
+        self.canvas.create_image((total_width*0.75,total_height*0.75),image=self.bg,anchor='nw')
+        print('total_width',total_width)
+        print('total_height',total_height)
+        self.frame_canvas.config(width=total_width,height=total_height)
+        self.canvas.config(scrollregion=self.canvas.bbox('all'))
+        frame_table=self.frame_table
+
 
     def run_cmd(self,cmd_i):
         os.system(cmd_i)         
