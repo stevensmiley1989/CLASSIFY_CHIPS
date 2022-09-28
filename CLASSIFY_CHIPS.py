@@ -552,10 +552,10 @@ class classify_chips:
             pass
         self.TRAIN_VAR=tk.StringVar()
         self.TRAIN_VAR.set(self.TRAIN)
-        self.TRAIN_TRUE_button=ttk.Radiobutton(text='TRAIN',style='Normal.TRadiobutton',variable=self.TRAIN_VAR,value=1,command=partial(self.selection,self.TRAIN_VAR))
+        self.TRAIN_TRUE_button=ttk.Radiobutton(self.frame_table,text='TRAIN',style='Normal.TRadiobutton',variable=self.TRAIN_VAR,value=1,command=partial(self.selection,self.TRAIN_VAR))
         self.TRAIN_TRUE_button.grid(row=1,column=1,stick='se')
 
-        self.TRAIN_FALSE_button=ttk.Radiobutton(text='TEST',style='Normal.TRadiobutton',variable=self.TRAIN_VAR,value=0,command=partial(self.selection,self.TRAIN_VAR))
+        self.TRAIN_FALSE_button=ttk.Radiobutton(self.frame_table,text='TEST',style='Normal.TRadiobutton',variable=self.TRAIN_VAR,value=0,command=partial(self.selection,self.TRAIN_VAR))
         self.TRAIN_FALSE_button.grid(row=2,column=1,stick='ne')
 
         self.CREATE_BUTTONS()
